@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>巣鴨学園将棋班 団体戦管理システム</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Serif+JP:wght@700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-primary: #0a0a0a;
+        --bg-secondary: #1a1a1a;
+        --border-color: #333333;
+        --text-primary: #ffffff;
+        --text-secondary: #a1a1aa;
+        --accent: #d4d4d8;
+      }
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: 'Noto Sans JP', sans-serif;
+        line-height: 1.6;
+      }
+      .font-serif-shogi {
+        font-family: 'Noto Serif JP', serif;
+      }
+      .card {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+      }
+      .btn-primary {
+        background-color: #f4f4f5;
+        color: #09090b;
+        font-weight: 700;
+        transition: all 0.2s;
+      }
+      .btn-primary:hover {
+        background-color: #ffffff;
+        transform: translateY(-1px);
+      }
+      .btn-outline {
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        transition: all 0.2s;
+      }
+      .btn-outline:hover {
+        background-color: #27272a;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      /* スクロールバーのカスタマイズ */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0a0a;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #333333;
+        border-radius: 4px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
