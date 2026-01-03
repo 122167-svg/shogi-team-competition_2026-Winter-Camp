@@ -9,62 +9,84 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Serif+JP:wght@700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --bg-primary: #0a0a0a;
-        --bg-secondary: #1a1a1a;
-        --border-color: #333333;
-        --text-primary: #ffffff;
-        --text-secondary: #a1a1aa;
-        --accent: #d4d4d8;
+        --bg-primary: #0c0a09; /* 漆黒 */
+        --bg-secondary: #1c1917; /* 深石色 */
+        --accent-gold: #d97706; /* 黄金色 */
+        --accent-gold-light: #fbbf24;
+        --accent-red: #991b1b; /* 漆赤 */
+        --text-primary: #fafaf9; /* 絹色 */
+        --text-secondary: #a8a29e;
       }
       body {
         background-color: var(--bg-primary);
         color: var(--text-primary);
         font-family: 'Noto Sans JP', sans-serif;
         line-height: 1.6;
+        background-image: radial-gradient(circle at 50% 50%, #1c1917 0%, #0c0a09 100%);
+        min-height: 100vh;
       }
       .font-serif-shogi {
         font-family: 'Noto Serif JP', serif;
       }
       .card {
         background-color: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
+        border: 1px solid #292524;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
       }
       .btn-primary {
-        background-color: #f4f4f5;
-        color: #09090b;
+        background: linear-gradient(135deg, var(--accent-gold-light) 0%, var(--accent-gold) 100%);
+        color: #000000;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(217, 119, 6, 0.5);
+        filter: brightness(1.1);
+      }
+      .btn-outline {
+        border: 2px solid #44403c;
+        color: var(--text-primary);
         font-weight: 700;
         transition: all 0.2s;
       }
-      .btn-primary:hover {
-        background-color: #ffffff;
-        transform: translateY(-1px);
-      }
-      .btn-outline {
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        transition: all 0.2s;
-      }
       .btn-outline:hover {
-        background-color: #27272a;
+        background-color: #292524;
+        border-color: var(--text-secondary);
+      }
+      .vs-badge {
+        background-color: #ffffff;
+        color: #000000;
+        font-weight: 900;
+        font-style: italic;
+        padding: 2px 10px;
+        border-radius: 2px;
+        box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        border: 1px solid #ffffff;
       }
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(4px); }
+        from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
       }
       .animate-fadeIn {
-        animation: fadeIn 0.4s ease-out forwards;
+        animation: fadeIn 0.5s ease-out forwards;
       }
-      /* スクロールバーのカスタマイズ */
-      ::-webkit-scrollbar {
-        width: 8px;
+      .accent-line {
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
+        width: 100%;
       }
-      ::-webkit-scrollbar-track {
-        background: #0a0a0a;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #333333;
-        border-radius: 4px;
+      select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23d97706' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+        appearance: none;
       }
     </style>
   <script type="importmap">
