@@ -79,7 +79,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
   return (
     <div className="space-y-10 animate-fadeIn max-w-3xl mx-auto">
       <div className="text-center">
-        <h2 className="text-3xl font-black font-serif-shogi text-white">戦略的オーダー登録</h2>
+        <h2 className="text-3xl font-black font-serif-shogi text-white"オーダー登録</h2>
         <div className="accent-line mt-4 mb-2"></div>
         <p className="text-stone-400 font-bold text-sm tracking-widest uppercase">Secret Order Submission</p>
       </div>
