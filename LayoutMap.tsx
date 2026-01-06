@@ -74,8 +74,7 @@ const LayoutMap: React.FC<Props> = ({ match1, match2 }) => {
 
       <div className="bg-stone-950 p-4 rounded-lg border border-stone-800 text-center">
         <p className="text-xs font-bold text-stone-400">
-          ※ 各自、ボードを挟んで対戦相手と向き合って着席してください。<br/>
-          中央の通路を塞がないよう注意してください。
+          ※ 各自、ボードを挟んで対戦相手と向き合って着席してください。
         </p>
       </div>
     </div>
