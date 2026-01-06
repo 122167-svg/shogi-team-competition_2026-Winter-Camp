@@ -66,7 +66,7 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
     <div className="space-y-16 animate-fadeIn pb-40 max-w-4xl mx-auto">
       <div className="text-center space-y-4">
         <span className="text-amber-600 text-xs font-black uppercase tracking-[0.5em]">Final Results Reveal</span>
-        <h2 className="text-6xl font-black font-serif-shogi text-white">栄光の表彰式</h2>
+        <h2 className="text-6xl font-black font-serif-shogi text-white">表彰式</h2>
         <div className="accent-line max-w-sm mx-auto"></div>
       </div>
 
