@@ -32,4 +32,4 @@ export const ROUND_CONFIGS = [
 
 export const SLOTS: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
 
-export const PASSWORD_REPORT = "4567";
+export const PASSWORD_REPORT = "maki";

@@ -62,34 +62,32 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
                 const winnerName = res?.winnerTeamId === match.team1Id ? p1 : p2;
 
                 return (
-                  <div key={slot} className={`p-6 rounded-xl border-2 transition-all flex items-center justify-between shadow-lg ${isReported ? 'bg-stone-900/50 border-stone-800 opacity-60' : 'bg-stone-900 border-stone-700 hover:border-amber-600'}`}>
+                  <div key={slot} className={`p-6 rounded-xl border-2 transition-all flex items-center justify-between shadow-lg ${isReported ? 'bg-stone-900/30 border-stone-800' : 'bg-stone-900 border-stone-700 hover:border-amber-600'}`}>
                     <div className="flex items-center space-x-5 flex-1 min-w-0">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm border-2 ${isReported ? 'border-stone-800 text-stone-700' : 'border-stone-600 text-stone-200'}`}>
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm border-2 ${isReported ? 'border-stone-800 text-stone-600' : 'border-stone-600 text-stone-200'}`}>
                         {slot}
                       </div>
                       <div className="flex flex-col min-w-0 flex-1">
                         <div className="flex items-center space-x-2">
-                          <span className={`text-sm font-black truncate ${isReported ? 'text-stone-500' : 'text-stone-100'}`}>{p1}</span>
+                          <span className={`text-sm font-black truncate ${isReported ? 'text-stone-400' : 'text-stone-100'}`}>{p1}</span>
                           <div className="vs-badge text-[9px] mx-1 shrink-0">VS</div>
-                          <span className={`text-sm font-black truncate ${isReported ? 'text-stone-500' : 'text-stone-100'}`}>{p2}</span>
+                          <span className={`text-sm font-black truncate ${isReported ? 'text-stone-400' : 'text-stone-100'}`}>{p2}</span>
                         </div>
                         {isReported && (
                           <div className="mt-2 text-xs font-black flex items-center gap-1.5">
-                            <span className="text-amber-600 uppercase tracking-tighter">WINNER:</span>
-                            <span className="text-white bg-stone-800 px-2 py-0.5 rounded border border-stone-700">{winnerName}</span>
+                            <span className="text-amber-600/70 uppercase tracking-tighter">WINNER:</span>
+                            <span className="text-stone-300 bg-stone-800 px-2 py-0.5 rounded border border-stone-700">{winnerName}</span>
                           </div>
                         )}
                       </div>
                     </div>
                     
-                    {!isReported && (
-                      <button 
-                        onClick={() => setReportModal({ mIdx, slot })}
-                        className="ml-4 px-6 py-2.5 btn-primary rounded-lg text-xs font-black shrink-0 shadow-lg"
-                      >
-                        報告
-                      </button>
-                    )}
+                    <button 
+                      onClick={() => setReportModal({ mIdx, slot })}
+                      className={`ml-4 px-6 py-2.5 rounded-lg text-xs font-black shrink-0 transition-all ${isReported ? 'btn-outline border-stone-700 text-stone-500 hover:text-white hover:border-amber-600 scale-90' : 'btn-primary shadow-lg'}`}
+                    >
+                      {isReported ? '訂正' : '報告'}
+                    </button>
                   </div>
                 );
               })}
@@ -100,14 +98,18 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
 
       {reportModal && (
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-md">
-          <div className="bg-[#121110] w-full max-sm p-10 rounded-2xl border border-stone-700 shadow-[0_0_100px_rgba(0,0,0,1)] space-y-8 animate-fadeIn">
+          <div className="bg-[#121110] w-full max-w-sm p-10 rounded-2xl border border-stone-700 shadow-[0_0_100px_rgba(0,0,0,1)] space-y-8 animate-fadeIn">
             <div className="text-center pb-4 border-b border-stone-800">
-              <div className="text-amber-600 font-black text-xs tracking-widest uppercase mb-1">Result Report</div>
-              <h3 className="text-2xl font-black font-serif-shogi text-white">勝者の報告 (Slot {reportModal.slot})</h3>
+              <div className="text-amber-600 font-black text-xs tracking-widest uppercase mb-1">
+                {round.matches[reportModal.mIdx].results.find(r => r.slot === reportModal.slot)?.winnerTeamId !== null ? 'Correction Form' : 'Result Report'}
+              </div>
+              <h3 className="text-2xl font-black font-serif-shogi text-white">
+                {round.matches[reportModal.mIdx].results.find(r => r.slot === reportModal.slot)?.winnerTeamId !== null ? '結果を訂正する' : '勝者の報告'} (Slot {reportModal.slot})
+              </h3>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest">勝利した選手</label>
+              <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest">勝利した選手を選択</label>
               {[
                 {id: round.matches[reportModal.mIdx].team1Id, name: round.matches[reportModal.mIdx].assignments[round.matches[reportModal.mIdx].team1Id][reportModal.slot]},
                 {id: round.matches[reportModal.mIdx].team2Id, name: round.matches[reportModal.mIdx].assignments[round.matches[reportModal.mIdx].team2Id][reportModal.slot]}
@@ -115,27 +117,27 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
                 <button
                   key={player.id}
                   onClick={() => handleReport(player.id)}
-                  className="w-full p-6 btn-outline rounded-xl font-black text-lg hover:border-amber-600 hover:text-amber-500 transition-all flex justify-between items-center"
+                  className="w-full p-6 btn-outline rounded-xl font-black text-lg hover:border-amber-600 hover:text-amber-500 transition-all flex justify-between items-center group"
                 >
-                  <span>{player.name}</span>
+                  <span className="group-hover:scale-110 transition-transform">{player.name}</span>
                   <span className="text-[10px] bg-stone-800 px-2 py-1 rounded text-stone-500">{TEAMS.find(t => t.id === player.id)?.name}</span>
                 </button>
               ))}
             </div>
 
             <div className="space-y-3 pt-4 border-t border-stone-800">
-              <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest text-center block">報告パスワード</label>
+              <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest text-center block">報告パスワードを入力</label>
               <input 
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="REPORT CODE"
-                className="w-full bg-stone-900 border-2 border-stone-800 p-4 rounded-lg text-center text-2xl font-black outline-none focus:border-amber-600 text-white tracking-[0.4em]"
+                placeholder="PASSWORD"
+                className="w-full bg-stone-900 border-2 border-stone-800 p-4 rounded-lg text-center text-2xl font-black outline-none focus:border-amber-600 text-white tracking-[0.4em] placeholder:tracking-normal placeholder:text-stone-800"
               />
               {error && <p className="text-red-500 text-xs font-bold text-center mt-2 animate-pulse">{error}</p>}
             </div>
 
-            <button onClick={() => setReportModal(null)} className="w-full text-stone-600 font-black text-xs uppercase tracking-widest hover:text-stone-200 transition-colors">閉じる</button>
+            <button onClick={() => { setReportModal(null); setPassword(""); setError(""); }} className="w-full text-stone-600 font-black text-xs uppercase tracking-widest hover:text-stone-200 transition-colors">戻る</button>
           </div>
         </div>
       )}
