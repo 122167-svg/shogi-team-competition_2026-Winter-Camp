@@ -12,9 +12,9 @@ const RulesScreen: React.FC<Props> = ({ onNext }) => {
     {
       title: "大会概要・基本ルール",
       items: [
-        "1チーム4名構成、全3回戦の総当たり戦です。",
-        "各試合は4つのスロット(A,B,C,D)で同時進行します。",
-        "【勝利条件】3勝以上で勝ち、2勝2敗は引き分け。",
+        "1チーム3名構成、6チームによる全3回戦の総当たり戦です。",
+        "各試合は3つのスロット(A,B,C)で同時進行します。",
+        "【勝利条件】2勝以上でチームの勝利 (3-0 / 2-1)。",
         "対局時計は使用せず、勝敗は自己申告制となります。"
       ]
     },
@@ -48,7 +48,7 @@ const RulesScreen: React.FC<Props> = ({ onNext }) => {
         </div>
         <div className="text-amber-500 font-black text-xl italic opacity-20">0{page + 1}</div>
       </div>
-      
+
       <ul className="space-y-6">
         {rules[page].items.map((item, idx) => (
           <li key={idx} className="flex items-start space-x-4 group">
@@ -61,22 +61,22 @@ const RulesScreen: React.FC<Props> = ({ onNext }) => {
       <div className="flex justify-between items-center pt-8 border-t border-zinc-800">
         <div className="flex space-x-3">
           {rules.map((_, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className={`h-1.5 rounded-full transition-all duration-300 ${idx === page ? 'w-8 bg-amber-500' : 'w-2 bg-zinc-800'}`}
             />
           ))}
         </div>
-        
+
         {page < rules.length - 1 ? (
-          <button 
+          <button
             onClick={() => setPage(page + 1)}
             className="px-10 py-3 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-black text-sm transition-all border border-zinc-700"
           >
             次へ
           </button>
         ) : (
-          <button 
+          <button
             onClick={onNext}
             className="px-12 py-3 btn-primary rounded-full text-sm active:scale-95"
           >

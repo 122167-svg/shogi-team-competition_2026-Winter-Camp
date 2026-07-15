@@ -1,5 +1,5 @@
 
-export type PlayerSlot = 'A' | 'B' | 'C' | 'D';
+export type PlayerSlot = 'A' | 'B' | 'C';
 
 export interface Team {
   id: number;
@@ -8,12 +8,12 @@ export interface Team {
 }
 
 export interface MatchAssignment {
-  [key: string]: string; // Slot (A, B, C, D) -> Player Name
+  [key: string]: string; // Slot (A, B, C) -> Player Name
 }
 
 export interface GameResult {
   slot: PlayerSlot;
-  winnerTeamId: number | null; // null if not reported yet, -1 for draw if possible (though 4 games prevents team draw easily)
+  winnerTeamId: number | null; // null if not reported yet
 }
 
 export interface RoundMatch {

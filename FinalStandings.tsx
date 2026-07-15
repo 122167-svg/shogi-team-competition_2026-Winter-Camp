@@ -13,18 +13,17 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
   const teamStats = TEAMS.map(team => {
     let points = 0;
     let individualWins = 0;
-    
+
     allRounds.forEach(round => {
       round.matches.forEach(match => {
         if (match.team1Id === team.id || match.team2Id === team.id) {
           const myWins = match.results.filter(r => r.winnerTeamId === team.id).length;
           individualWins += myWins;
-          if (myWins >= 3) points += 2;
-          else if (myWins === 2) points += 1;
+          if (myWins >= 2) points += 2;
         }
       });
     });
-    
+
     return { ...team, points, individualWins };
   });
 
@@ -35,7 +34,7 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
 
   const playerStatsMap: { [name: string]: number } = {};
   TEAMS.forEach(t => t.players.forEach(p => playerStatsMap[p] = 0));
-  
+
   allRounds.forEach(round => {
     round.matches.forEach(match => {
       match.results.forEach(res => {
@@ -55,12 +54,14 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
     ...p,
     rank: idx > 0 && p.wins === arr[idx - 1].wins ? null : idx + 1
   }));
-  
+
   let currentRank = 1;
   rankedPlayers.forEach((p, idx) => {
     if (p.rank) currentRank = p.rank;
     else rankedPlayers[idx].rank = currentRank;
   });
+
+  const totalTeams = sortedTeams.length;
 
   return (
     <div className="space-y-16 animate-fadeIn pb-40 max-w-4xl mx-auto">
@@ -71,16 +72,16 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
       </div>
 
       <div className="space-y-6">
-        {[4, 3, 2, 1].map(rank => {
+        {Array.from({ length: totalTeams }, (_, i) => totalTeams - i).map(rank => {
           const team = sortedTeams[rank - 1];
-          const isRevealed = revealStep >= (5 - rank);
+          const isRevealed = revealStep >= (totalTeams + 1 - rank);
           const isFirst = rank === 1;
-          
+
           return (
             <div key={rank} className={`transition-all duration-1000 ${isRevealed ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className={`p-8 rounded-xl border-2 flex items-center justify-between shadow-2xl overflow-hidden relative
                 ${isFirst ? 'bg-amber-600/10 border-amber-500' : 'bg-zinc-900/80 border-zinc-800'}`}>
-                
+
                 {isFirst && isRevealed && (
                   <div className="absolute top-0 right-0 p-2 font-black italic text-amber-500/10 text-9xl -mr-8 -mt-8 pointer-events-none">NO.1</div>
                 )}
@@ -110,9 +111,9 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
         })}
       </div>
 
-      {revealStep < 4 && (
+      {revealStep < totalTeams && (
         <div className="flex justify-center">
-          <button 
+          <button
             onClick={() => setRevealStep(prev => prev + 1)}
             className="px-20 py-5 btn-primary rounded-full text-xl shadow-[0_15px_30px_rgba(217,119,6,0.3)]"
           >
@@ -121,7 +122,7 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
         </div>
       )}
 
-      {revealStep >= 4 && (
+      {revealStep >= totalTeams && (
         <div className="animate-fadeIn space-y-8 pt-16">
           <div className="text-center space-y-2">
             <h3 className="text-2xl font-black font-serif-shogi text-amber-500">個人成績 (勝数ランキング)</h3>
@@ -151,7 +152,7 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
               </tbody>
             </table>
           </div>
-          
+
           <div className="text-center pt-20 pb-10">
             <button onClick={() => window.location.reload()} className="text-zinc-600 font-bold hover:text-white transition-colors underline underline-offset-8">
               大会をリセットしてトップに戻る

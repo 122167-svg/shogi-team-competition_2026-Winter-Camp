@@ -19,7 +19,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
 
   const isTeamDone = (teamId: number) => {
     const match = matchesForRound.find(m => m.team1Id === teamId || m.team2Id === teamId);
-    return match && Object.keys(match.assignments[teamId]).length === 4;
+    return match && Object.keys(match.assignments[teamId]).length === 3;
   };
 
   const startRegistration = (teamId: number) => {
@@ -63,8 +63,8 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
   const submitRegistration = () => {
     if (activeTeamId === null) return;
     const players = Object.values(tempAssignments);
-    if (new Set(players).size !== 4 || players.length !== 4) {
-      alert("4名全員を重複なく選択してください。");
+    if (new Set(players).size !== 3 || players.length !== 3) {
+      alert("3名全員を重複なく選択してください。");
       return;
     }
     const matchIdx = matchesForRound.findIndex(m => m.team1Id === activeTeamId || m.team2Id === activeTeamId);
@@ -74,16 +74,16 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
 
   const canProceed = allTeamIds.every(id => isTeamDone(id));
   const activeTeam = activeTeamId ? TEAMS.find(t => t.id === activeTeamId) : null;
-  const remaining = 4 - Object.keys(tempAssignments).length;
+  const remaining = 3 - Object.keys(tempAssignments).length;
 
   return (
     <div className="space-y-10 animate-fadeIn max-w-3xl mx-auto">
       <div className="text-center">
-        <h2 className="text-3xl font-black font-serif-shogi text-white"オーダー登録</h2>
+        <h2 className="text-3xl font-black font-serif-shogi text-white">オーダー登録</h2>
         <div className="accent-line mt-4 mb-2"></div>
         <p className="text-stone-400 font-bold text-sm tracking-widest uppercase">Secret Order Submission</p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {allTeamIds.map(id => {
           const team = TEAMS.find(t => t.id === id);
@@ -94,8 +94,8 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
               onClick={() => !done && startRegistration(id)}
               disabled={done}
               className={`p-8 card text-left transition-all border-2 relative group
-                ${done 
-                  ? 'opacity-40 border-transparent grayscale cursor-default' 
+                ${done
+                  ? 'opacity-40 border-transparent grayscale cursor-default'
                   : 'hover:border-amber-600 border-stone-800'}`}
             >
               <div className="flex justify-between items-center">

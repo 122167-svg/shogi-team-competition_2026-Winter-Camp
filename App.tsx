@@ -55,12 +55,12 @@ const App: React.FC = () => {
   const updateAssignments = (matchIdx: number, teamId: number, assignments: { [key: string]: string }) => {
     const newRounds = [...rounds];
     newRounds[currentRoundIdx].matches[matchIdx].assignments[teamId] = assignments;
-    
-    const allRegistered = newRounds[currentRoundIdx].matches.every(m => 
-      Object.keys(m.assignments[m.team1Id]).length === 4 && 
-      Object.keys(m.assignments[m.team2Id]).length === 4
+
+    const allRegistered = newRounds[currentRoundIdx].matches.every(m =>
+      Object.keys(m.assignments[m.team1Id]).length === 3 &&
+      Object.keys(m.assignments[m.team2Id]).length === 3
     );
-    
+
     if (allRegistered) {
       newRounds[currentRoundIdx].isLocked = true;
     }
@@ -81,15 +81,15 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 overflow-x-hidden">
-      <div className="max-w-5xl w-full space-y-8">
+      <div className="max-w-6xl w-full space-y-8">
         {step === AppStep.WELCOME && <WelcomeScreen onStart={handleNextStep} />}
         {step === AppStep.RULES && <RulesScreen onNext={handleNextStep} />}
         {step === AppStep.ROUND_PREVIEW && (
           <RoundPreview round={currentRound} onNext={handleNextStep} />
         )}
         {step === AppStep.STRATEGY_REGISTRATION && (
-          <StrategyScreen 
-            round={currentRound} 
+          <StrategyScreen
+            round={currentRound}
             onComplete={handleNextStep}
             onUpdateAssignment={updateAssignments}
           />
@@ -98,8 +98,8 @@ const App: React.FC = () => {
           <MatchingScreen round={currentRound} onNext={handleNextStep} />
         )}
         {step === AppStep.BATTLE_PROGRESS && (
-          <BattleScreen 
-            round={currentRound} 
+          <BattleScreen
+            round={currentRound}
             onReport={reportResult}
             onAllFinished={handleNextStep}
           />

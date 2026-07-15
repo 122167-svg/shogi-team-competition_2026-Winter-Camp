@@ -5,31 +5,41 @@ export const TEAMS: Team[] = [
   {
     id: 1,
     name: "チーム①",
-    players: ["下田聖", "下村篤生", "布施皓己", "熱田望"]
+    players: ["下田 聖", "佐藤 仁紀", "豊川 晴一朗"]
   },
   {
     id: 2,
     name: "チーム②",
-    players: ["小畑貴慈", "片山幸典", "岩間悠希", "松井俐真"]
+    players: ["小畑 貴慈", "辻井 琥基", "林 志銘"]
   },
   {
     id: 3,
     name: "チーム③",
-    players: ["大庭悠誠", "棚瀬侑真", "秋山七星", "中野琥太郎"]
+    players: ["大庭 悠誠", "川上 諒", "趙 龍晧"]
   },
   {
     id: 4,
     name: "チーム④",
-    players: ["高木翔玄", "龍口直史", "池田大翔", "槇啓秀"]
+    players: ["下村 篤生", "小林 慈人", "時 一然"]
+  },
+  {
+    id: 5,
+    name: "チーム⑤",
+    players: ["秀村 紘嗣", "熱田 望", "小泉 将成"]
+  },
+  {
+    id: 6,
+    name: "チーム⑥",
+    players: ["山崎 泰蔵", "池田 大翔", "松井 俐真"]
   }
 ];
 
 export const ROUND_CONFIGS = [
-  { round: 1, pairings: [[1, 2], [3, 4]] },
-  { round: 2, pairings: [[1, 3], [2, 4]] },
-  { round: 3, pairings: [[1, 4], [2, 3]] }
+  { round: 1, pairings: [[1, 2], [3, 4], [5, 6]] },
+  { round: 2, pairings: [[1, 3], [2, 5], [4, 6]] },
+  { round: 3, pairings: [[1, 4], [2, 6], [3, 5]] }
 ];
 
-export const SLOTS: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
+export const SLOTS: ('A' | 'B' | 'C')[] = ['A', 'B', 'C'];
 
 export const PASSWORD_REPORT = "maki";

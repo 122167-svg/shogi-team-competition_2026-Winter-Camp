@@ -30,7 +30,7 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
   const isAllDone = round.matches.every(m => m.completed);
 
   return (
-    <div className="space-y-12 animate-fadeIn max-w-5xl mx-auto pb-24">
+    <div className="space-y-12 animate-fadeIn max-w-6xl mx-auto pb-24">
       <div className="text-center">
         <h2 className="text-4xl font-black font-serif-shogi text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
           対局進行・勝敗報告
@@ -44,16 +44,16 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
           <div key={mIdx} className="card overflow-hidden shadow-2xl border-stone-800">
             <div className="bg-stone-800/80 px-8 py-5 flex justify-between items-center border-b border-stone-700">
               <span className="text-xl font-black font-serif-shogi text-white">
-                {TEAMS.find(t => t.id === match.team1Id)?.name} 
-                <span className="text-amber-600 font-sans mx-3 text-sm italic">vs</span> 
+                {TEAMS.find(t => t.id === match.team1Id)?.name}
+                <span className="text-amber-600 font-sans mx-3 text-sm italic">vs</span>
                 {TEAMS.find(t => t.id === match.team2Id)?.name}
               </span>
               <div className={`px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-inner ${match.completed ? 'bg-amber-600 text-black' : 'bg-stone-900 text-stone-500 border border-stone-800'}`}>
                 {match.completed ? '集計済み' : '進行中'}
               </div>
             </div>
-            
-            <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
               {SLOTS.map(slot => {
                 const res = match.results.find(r => r.slot === slot);
                 const isReported = res?.winnerTeamId !== null;
@@ -63,12 +63,12 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
 
                 return (
                   <div key={slot} className={`p-6 rounded-xl border-2 transition-all flex items-center justify-between shadow-lg ${isReported ? 'bg-stone-900/30 border-stone-800' : 'bg-stone-900 border-stone-700 hover:border-amber-600'}`}>
-                    <div className="flex items-center space-x-5 flex-1 min-w-0">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm border-2 ${isReported ? 'border-stone-800 text-stone-600' : 'border-stone-600 text-stone-200'}`}>
+                    <div className="flex items-center space-x-4 flex-1 min-w-0">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm border-2 shrink-0 ${isReported ? 'border-stone-800 text-stone-600' : 'border-stone-600 text-stone-200'}`}>
                         {slot}
                       </div>
                       <div className="flex flex-col min-w-0 flex-1">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-1">
                           <span className={`text-sm font-black truncate ${isReported ? 'text-stone-400' : 'text-stone-100'}`}>{p1}</span>
                           <div className="vs-badge text-[9px] mx-1 shrink-0">VS</div>
                           <span className={`text-sm font-black truncate ${isReported ? 'text-stone-400' : 'text-stone-100'}`}>{p2}</span>
@@ -76,15 +76,15 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
                         {isReported && (
                           <div className="mt-2 text-xs font-black flex items-center gap-1.5">
                             <span className="text-amber-600/70 uppercase tracking-tighter">WINNER:</span>
-                            <span className="text-stone-300 bg-stone-800 px-2 py-0.5 rounded border border-stone-700">{winnerName}</span>
+                            <span className="text-stone-300 bg-stone-800 px-2 py-0.5 rounded border border-stone-700 truncate">{winnerName}</span>
                           </div>
                         )}
                       </div>
                     </div>
-                    
-                    <button 
+
+                    <button
                       onClick={() => setReportModal({ mIdx, slot })}
-                      className={`ml-4 px-6 py-2.5 rounded-lg text-xs font-black shrink-0 transition-all ${isReported ? 'btn-outline border-stone-700 text-stone-500 hover:text-white hover:border-amber-600 scale-90' : 'btn-primary shadow-lg'}`}
+                      className={`ml-4 px-5 py-2.5 rounded-lg text-xs font-black shrink-0 transition-all ${isReported ? 'btn-outline border-stone-700 text-stone-500 hover:text-white hover:border-amber-600 scale-90' : 'btn-primary shadow-lg'}`}
                     >
                       {isReported ? '訂正' : '報告'}
                     </button>
@@ -119,15 +119,15 @@ const BattleScreen: React.FC<Props> = ({ round, onReport, onAllFinished }) => {
                   onClick={() => handleReport(player.id)}
                   className="w-full p-6 btn-outline rounded-xl font-black text-lg hover:border-amber-600 hover:text-amber-500 transition-all flex justify-between items-center group"
                 >
-                  <span className="group-hover:scale-110 transition-transform">{player.name}</span>
-                  <span className="text-[10px] bg-stone-800 px-2 py-1 rounded text-stone-500">{TEAMS.find(t => t.id === player.id)?.name}</span>
+                  <span className="group-hover:scale-110 transition-transform truncate">{player.name}</span>
+                  <span className="text-[10px] bg-stone-800 px-2 py-1 rounded text-stone-500 shrink-0">{TEAMS.find(t => t.id === player.id)?.name}</span>
                 </button>
               ))}
             </div>
 
             <div className="space-y-3 pt-4 border-t border-stone-800">
               <label className="text-[10px] font-black text-stone-500 uppercase tracking-widest text-center block">報告パスワードを入力</label>
-              <input 
+              <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

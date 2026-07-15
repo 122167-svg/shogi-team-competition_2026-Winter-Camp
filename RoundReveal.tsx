@@ -19,13 +19,13 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
     const m = round.matches[matchIdx];
     const s1 = getTeamScore(matchIdx, m.team1Id);
     const s2 = getTeamScore(matchIdx, m.team2Id);
-    if (s1 > s2) return { winner: m.team1Id, text: "勝利" };
-    if (s2 > s1) return { winner: m.team2Id, text: "勝利" };
-    return { winner: null, text: "引き分け" };
+    if (s1 > s2) return { winner: m.team1Id, text: "勝利", s1, s2 };
+    if (s2 > s1) return { winner: m.team2Id, text: "勝利", s1, s2 };
+    return { winner: null, text: "引き分け", s1, s2 };
   };
 
   return (
-    <div className="space-y-12 animate-fadeIn pb-24 max-w-4xl mx-auto">
+    <div className="space-y-12 animate-fadeIn pb-24 max-w-5xl mx-auto">
       <div className="text-center space-y-4">
         <span className="text-amber-600 text-xs font-black uppercase tracking-[0.4em]">Round Summary</span>
         <h2 className="text-5xl font-black font-serif-shogi text-white">第{round.roundNumber}回戦 結果</h2>
@@ -54,7 +54,7 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
                     {s1}
                   </div>
                 </div>
-                
+
                 <div className="px-10">
                   <div className="vs-badge text-2xl scale-150">VS</div>
                 </div>
@@ -76,7 +76,7 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
                 </div>
               ) : (
                 <div className="flex justify-center pt-4">
-                  <button 
+                  <button
                     onClick={() => setRevealedMatchIdx(mIdx)}
                     className="px-12 py-4 btn-primary rounded-full text-xl shadow-xl hover:scale-105 active:scale-95 transition-transform"
                   >
@@ -91,7 +91,7 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
 
       {revealedMatchIdx !== null && revealedMatchIdx === round.matches.length - 1 && (
         <div className="flex justify-center pt-10">
-          <button 
+          <button
             onClick={onNext}
             className="px-24 py-6 bg-white text-black hover:bg-zinc-200 rounded-full font-black text-2xl transition-all shadow-2xl active:scale-95 border-b-4 border-zinc-400"
           >
