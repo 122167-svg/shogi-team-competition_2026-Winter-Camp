@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface Props {
@@ -14,7 +13,7 @@ const WelcomeScreen: React.FC<Props> = ({ onStart }) => {
           夏期合宿 団体戦
         </h1>
         <div className="accent-line max-w-xs mx-auto"></div>
-        <p className="text-xl text-stone-300 font-medium">進行管理・スコアリングシステム</p>
+        <p className="text-xl text-stone-300 font-medium">進行管理・スコアリングシステム (4 vs 4)</p>
       </div>
 
       <div className="pt-8">

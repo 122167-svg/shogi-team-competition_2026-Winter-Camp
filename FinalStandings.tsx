@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { RoundData } from './types';
 import { TEAMS } from './constants';
@@ -10,6 +9,11 @@ interface Props {
 const FinalStandings: React.FC<Props> = ({ allRounds }) => {
   const [revealStep, setRevealStep] = useState(0);
 
+  // 4 vs 4 勝敗ルール（前大会方式）:
+  //   自チームの勝ち数 (myWins) が
+  //     3勝以上 → 勝ち点 2
+  //     2勝    → 勝ち点 1
+  //     1勝以下 → 勝ち点 0
   const teamStats = TEAMS.map(team => {
     let points = 0;
     let individualWins = 0;
@@ -19,7 +23,8 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
         if (match.team1Id === team.id || match.team2Id === team.id) {
           const myWins = match.results.filter(r => r.winnerTeamId === team.id).length;
           individualWins += myWins;
-          if (myWins >= 2) points += 2;
+          if (myWins >= 3) points += 2;
+          else if (myWins === 2) points += 1;
         }
       });
     });
@@ -32,13 +37,14 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
     return b.individualWins - a.individualWins;
   });
 
+  // 個人勝数（チーム②の補欠も対戦すればカウントされる想定：今回はベンチのためカウントされない）
   const playerStatsMap: { [name: string]: number } = {};
   TEAMS.forEach(t => t.players.forEach(p => playerStatsMap[p] = 0));
 
   allRounds.forEach(round => {
     round.matches.forEach(match => {
       match.results.forEach(res => {
-        if (res.winnerTeamId) {
+        if (res.winnerTeamId && res.winnerTeamId > 0) {
           const winnerName = match.assignments[res.winnerTeamId][res.slot];
           if (winnerName) playerStatsMap[winnerName]++;
         }
@@ -67,8 +73,9 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
     <div className="space-y-16 animate-fadeIn pb-40 max-w-4xl mx-auto">
       <div className="text-center space-y-4">
         <span className="text-amber-600 text-xs font-black uppercase tracking-[0.5em]">Final Results Reveal</span>
-        <h2 className="text-6xl font-black font-serif-shogi text-white">表彰式</h2>
+        <h2 className="text-6xl font-black font-serif-shogi text-white">栄光の表彰式</h2>
         <div className="accent-line max-w-sm mx-auto"></div>
+        <p className="text-stone-500 text-xs">勝ち点: 3勝以上=2点 / 2勝=1点 / 1勝以下=0点</p>
       </div>
 
       <div className="space-y-6">

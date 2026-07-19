@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { RoundData } from './types';
 import { TEAMS } from './constants';
@@ -19,9 +18,16 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
     const m = round.matches[matchIdx];
     const s1 = getTeamScore(matchIdx, m.team1Id);
     const s2 = getTeamScore(matchIdx, m.team2Id);
-    if (s1 > s2) return { winner: m.team1Id, text: "勝利", s1, s2 };
-    if (s2 > s1) return { winner: m.team2Id, text: "勝利", s1, s2 };
-    return { winner: null, text: "引き分け", s1, s2 };
+    // 4 vs 4: 3勝以上でチーム勝利、2勝は引き分け(勝ち点1)、それ以下は負け
+    let winner: number | null = null;
+    let resultText = '';
+    let teamPoints = '';
+    if (s1 >= 3) { winner = m.team1Id; resultText = `の勝利 (${s1} - ${s2})`; teamPoints = '勝ち点 +2'; }
+    else if (s2 >= 3) { winner = m.team2Id; resultText = `の勝利 (${s1} - ${s2})`; teamPoints = '勝ち点 +2'; }
+    else if (s1 === 2 && s2 === 2) { resultText = `引き分け (2 - 2)`; teamPoints = '勝ち点 +1 (両チーム)'; }
+    else if (s1 > s2) { winner = m.team1Id; resultText = `辛勝 (${s1} - ${s2})`; teamPoints = '勝ち点 +0'; }
+    else if (s2 > s1) { winner = m.team2Id; resultText = `辛勝 (${s1} - ${s2})`; teamPoints = '勝ち点 +0'; }
+    return { winner, resultText, teamPoints, s1, s2 };
   };
 
   return (
@@ -35,8 +41,8 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
       <div className="space-y-10">
         {round.matches.map((match, mIdx) => {
           const verdict = getMatchVerdict(mIdx);
-          const s1 = getTeamScore(mIdx, match.team1Id);
-          const s2 = getTeamScore(mIdx, match.team2Id);
+          const s1 = verdict.s1;
+          const s2 = verdict.s2;
           const isRevealed = revealedMatchIdx !== null && revealedMatchIdx >= mIdx;
 
           return (
@@ -68,11 +74,14 @@ const RoundReveal: React.FC<Props> = ({ round, onNext }) => {
               </div>
 
               {isRevealed ? (
-                <div className="text-center pt-8 border-t border-zinc-800 animate-fadeIn">
-                  <span className={`text-4xl font-black font-serif-shogi px-12 py-3 rounded-full border-2 shadow-2xl
-                    ${verdict.winner === null ? 'border-zinc-700 text-zinc-500' : 'border-amber-600 text-white bg-amber-600/10'}`}>
-                    {verdict.winner ? `${TEAMS.find(t => t.id === verdict.winner)?.name} の勝利` : '引き分け'}
+                <div className="text-center pt-8 border-t border-zinc-800 animate-fadeIn space-y-2">
+                  <span className={`text-3xl font-black font-serif-shogi px-12 py-3 rounded-full border-2 shadow-2xl
+                    ${verdict.winner === null ? 'border-zinc-700 text-zinc-300' : 'border-amber-600 text-white bg-amber-600/10'}`}>
+                    {verdict.winner ? `${TEAMS.find(t => t.id === verdict.winner)?.name}${verdict.resultText}` : verdict.resultText}
                   </span>
+                  <p className="text-xs text-stone-400 font-bold tracking-widest uppercase pt-2">
+                    {verdict.teamPoints}
+                  </p>
                 </div>
               ) : (
                 <div className="flex justify-center pt-4">

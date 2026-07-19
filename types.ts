@@ -1,5 +1,4 @@
-
-export type PlayerSlot = 'A' | 'B' | 'C';
+export type PlayerSlot = 'A' | 'B' | 'C' | 'D';
 
 export interface Team {
   id: number;
@@ -8,12 +7,12 @@ export interface Team {
 }
 
 export interface MatchAssignment {
-  [key: string]: string; // Slot (A, B, C) -> Player Name
+  [key: string]: string;
 }
 
 export interface GameResult {
   slot: PlayerSlot;
-  winnerTeamId: number | null; // null if not reported yet
+  winnerTeamId: number | null | -1; // -1 = 引き分けスロット（参考用）
 }
 
 export interface RoundMatch {
@@ -29,7 +28,7 @@ export interface RoundMatch {
 export interface RoundData {
   roundNumber: number;
   matches: RoundMatch[];
-  isLocked: boolean; // True when all teams registered their slots
+  isLocked: boolean;
 }
 
 export enum AppStep {

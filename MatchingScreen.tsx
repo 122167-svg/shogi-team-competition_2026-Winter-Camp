@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { RoundData } from './types';
 import { SLOTS, TEAMS } from './constants';
@@ -16,7 +15,7 @@ const MatchingScreen: React.FC<Props> = ({ round, onNext }) => {
     <div className="space-y-12 animate-fadeIn max-w-6xl mx-auto pb-20">
       <div className="text-center space-y-4">
         <div className="inline-block bg-amber-600/10 text-amber-500 px-6 py-1 rounded-full text-xs font-black tracking-widest uppercase border border-amber-600/20">
-          Round Pairing & Placement
+          Round Pairing & Placement (4 vs 4)
         </div>
         <h2 className="text-5xl font-black font-serif-shogi text-white">第{round.roundNumber}回戦：対局配置</h2>
         <div className="accent-line max-w-md mx-auto"></div>
@@ -24,7 +23,7 @@ const MatchingScreen: React.FC<Props> = ({ round, onNext }) => {
 
       <LayoutMap matches={allMatches} />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {allMatches.map((match, mIdx) => (
           <div key={mIdx} className="card overflow-hidden shadow-2xl group">
             <div className="bg-stone-800 p-5 flex justify-between items-center border-b border-stone-700">
@@ -35,13 +34,13 @@ const MatchingScreen: React.FC<Props> = ({ round, onNext }) => {
                 </span>
               </div>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-6 space-y-3">
               {SLOTS.map(slot => (
                 <div key={slot} className="flex items-center group/row">
                   <div className="w-8 h-8 flex items-center justify-center bg-stone-900 rounded font-black text-amber-500 text-xs border border-stone-800 shrink-0">
                     {slot}
                   </div>
-                  <div className="flex-1 flex justify-between items-center px-4 py-3 bg-stone-950/80 rounded-lg border border-stone-800 ml-3 shadow-inner">
+                  <div className="flex-1 flex justify-between items-center px-4 py-2.5 bg-stone-950/80 rounded-lg border border-stone-800 ml-3 shadow-inner">
                     <span className="font-black text-white flex-1 text-center truncate text-sm">{match.assignments[match.team1Id][slot]}</span>
                     <div className="vs-badge text-[9px] mx-2 shrink-0">VS</div>
                     <span className="font-black text-white flex-1 text-center truncate text-sm">{match.assignments[match.team2Id][slot]}</span>

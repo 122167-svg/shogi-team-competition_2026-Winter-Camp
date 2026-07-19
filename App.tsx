@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { AppStep, RoundData, PlayerSlot } from './types';
-import { ROUND_CONFIGS, SLOTS } from './constants';
+import { ROUND_CONFIGS, SLOTS, SUBSTITUTE_KEY, TEAM_WITH_SUBSTITUTE } from './constants';
 import WelcomeScreen from './WelcomeScreen';
 import RulesScreen from './RulesScreen';
 import RoundPreview from './RoundPreview';
@@ -52,13 +51,26 @@ const App: React.FC = () => {
     }
   };
 
+  // 4スロット全て埋まっているか
+  const slotsAllFilled = (assignments: { [key: string]: string }) =>
+    SLOTS.every(s => !!assignments[s]);
+
+  // チーム登録完了の判定（チーム②のみ補欠設定必須）
+  const isTeamRegistrationComplete = (teamId: number, assignments: { [key: string]: string }) => {
+    if (!slotsAllFilled(assignments)) return false;
+    if (teamId === TEAM_WITH_SUBSTITUTE) {
+      return !!assignments[SUBSTITUTE_KEY];
+    }
+    return true;
+  };
+
   const updateAssignments = (matchIdx: number, teamId: number, assignments: { [key: string]: string }) => {
     const newRounds = [...rounds];
     newRounds[currentRoundIdx].matches[matchIdx].assignments[teamId] = assignments;
 
     const allRegistered = newRounds[currentRoundIdx].matches.every(m =>
-      Object.keys(m.assignments[m.team1Id]).length === 3 &&
-      Object.keys(m.assignments[m.team2Id]).length === 3
+      isTeamRegistrationComplete(m.team1Id, m.assignments[m.team1Id]) &&
+      isTeamRegistrationComplete(m.team2Id, m.assignments[m.team2Id])
     );
 
     if (allRegistered) {

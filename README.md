@@ -1,20 +1,42 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 巣鴨学園将棋班 夏期合宿 団体戦進行システム (4 vs 4)
 
-# Run and deploy your AI Studio app
+## 構成
+- **4 チーム総当たり × 3 回戦**
+- 各試合は **4 vs 4**（スロット A/B/C/D の 4 面で同時進行）
+- チーム②のみ 5 名登録（対局毎に 4 名をスロットへ、1 名を補欠として指定）
 
-This contains everything you need to run your app locally.
+## チーム編成
+| ID | チーム | メンバー |
+|---|---|---|
+| 1 | チーム① | 下田 / 佐藤 / 豊川 / 時 |
+| 2 | チーム② | 小畑 / 小林 / 松井 / 辻井 / 林 |
+| 3 | チーム③ | 大庭 / 下村 / 川上 / 趙 |
+| 4 | チーム④ | 秀村 / 山崎 / 熱田 / 小泉 |
 
-View your app in AI Studio: https://ai.studio/apps/drive/172atbP8PMgvIZuG85OQpxcdjP745s_hC
+## 対戦順
+| Round | 対戦 |
+|---|---|
+| 1 | ① vs ② ／ ③ vs ④ |
+| 2 | ① vs ③ ／ ② vs ④ |
+| 3 | ① vs ④ ／ ② vs ③ |
 
-## Run Locally
+## 勝敗ルール（前大会方式を踏襲）
+| チーム側の総勝数 | チーム結果 | 勝ち点 |
+|---|---|---|
+| 3勝以上 | 勝利 | +2 |
+| 2勝 | 引き分け | +1 |
+| 1勝以下 | 負け | +0 |
 
-**Prerequisites:**  Node.js
+## チーム②の補欠運用
+- 5名のうち **4名をスロット A/B/C/D へ**、**1名を補欠として別途指名**。
+- 補欠は **対局毎に自由に変更可**（各回戦「オーダー登録」画面で選択）。
+- 補欠選手の個人勝数は集計対象外（ベンチのため）。
 
+## 起動
+```
+npm install
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 結果報告パスワード
+`maki`

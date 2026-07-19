@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { RoundData, PlayerSlot } from './types';
-import { TEAMS, SLOTS } from './constants';
+import { TEAMS, SLOTS, SUBSTITUTE_KEY, TEAM_WITH_SUBSTITUTE } from './constants';
 
 interface Props {
   round: RoundData;
@@ -9,17 +8,24 @@ interface Props {
   onComplete: () => void;
 }
 
+type SlotOrSub = PlayerSlot | typeof SUBSTITUTE_KEY;
+
 const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete }) => {
   const [activeTeamId, setActiveTeamId] = useState<number | null>(null);
   const [tempAssignments, setTempAssignments] = useState<{ [slot: string]: string }>({});
-  const [swapModal, setSwapModal] = useState<{ slot: PlayerSlot, playerName: string, prevSlot: string } | null>(null);
+  const [swapModal, setSwapModal] = useState<{ slot: SlotOrSub, playerName: string, prevSlot: string } | null>(null);
 
   const matchesForRound = round.matches;
   const allTeamIds = matchesForRound.flatMap(m => [m.team1Id, m.team2Id]);
 
+  const slotsAllFilledInTeam = (teamId: number, source: { [key: string]: string }) =>
+    SLOTS.every(s => !!source[s]);
+
   const isTeamDone = (teamId: number) => {
     const match = matchesForRound.find(m => m.team1Id === teamId || m.team2Id === teamId);
-    return match && Object.keys(match.assignments[teamId]).length === 3;
+    if (!match) return false;
+    return slotsAllFilledInTeam(teamId, match.assignments[teamId]) &&
+      (teamId !== TEAM_WITH_SUBSTITUTE || !!match.assignments[teamId][SUBSTITUTE_KEY]);
   };
 
   const startRegistration = (teamId: number) => {
@@ -27,7 +33,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
     setTempAssignments({});
   };
 
-  const handleSelectPlayer = (slot: PlayerSlot, playerName: string) => {
+  const handleSelectPlayer = (slot: SlotOrSub, playerName: string) => {
     if (playerName === "") {
       setTempAssignments(prev => {
         const next = { ...prev };
@@ -36,13 +42,13 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
       });
       return;
     }
-
+    // 重複チェック（補欠⇄スロットの入替も対応）
     const prevSlotEntry = Object.entries(tempAssignments).find(
       ([s, name]) => s !== slot && name === playerName
     );
 
     if (prevSlotEntry) {
-      setSwapModal({ slot, playerName, prevSlot: prevSlotEntry[0] as PlayerSlot });
+      setSwapModal({ slot, playerName, prevSlot: prevSlotEntry[0] });
       return;
     }
 
@@ -62,11 +68,28 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
 
   const submitRegistration = () => {
     if (activeTeamId === null) return;
-    const players = Object.values(tempAssignments);
-    if (new Set(players).size !== 3 || players.length !== 3) {
-      alert("3名全員を重複なく選択してください。");
+    const filledSlotPlayers = SLOTS.map(s => tempAssignments[s] || "").filter(Boolean);
+    if (new Set(filledSlotPlayers).size !== 4 || filledSlotPlayers.length !== 4) {
+      alert("スロットA〜Dは選手4名を重複なく選択してください。");
       return;
     }
+    const isSubTeam = activeTeamId === TEAM_WITH_SUBSTITUTE;
+    if (isSubTeam && !tempAssignments[SUBSTITUTE_KEY]) {
+      alert("チーム②は補欠を1名設定してください。");
+      return;
+    }
+    // チーム②の場合、スロット4名と補欠1名が全て異なるプレイヤーで構成されているか念のため確認
+    if (isSubTeam) {
+      const allAssigned = new Set([
+        ...filledSlotPlayers,
+        tempAssignments[SUBSTITUTE_KEY]
+      ]);
+      if (allAssigned.size !== 5) {
+        alert("スロット4名と補欠1名は全員異なる選手にしてください。");
+        return;
+      }
+    }
+
     const matchIdx = matchesForRound.findIndex(m => m.team1Id === activeTeamId || m.team2Id === activeTeamId);
     onUpdateAssignment(matchIdx, activeTeamId, tempAssignments);
     setActiveTeamId(null);
@@ -74,12 +97,13 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
 
   const canProceed = allTeamIds.every(id => isTeamDone(id));
   const activeTeam = activeTeamId ? TEAMS.find(t => t.id === activeTeamId) : null;
-  const remaining = 3 - Object.keys(tempAssignments).length;
+  const remaining = 4 - SLOTS.filter(s => !!tempAssignments[s]).length;
+  const subChosen = !!tempAssignments[SUBSTITUTE_KEY];
 
   return (
     <div className="space-y-10 animate-fadeIn max-w-3xl mx-auto">
       <div className="text-center">
-        <h2 className="text-3xl font-black font-serif-shogi text-white">オーダー登録</h2>
+        <h2 className="text-3xl font-black font-serif-shogi text-white">オーダー登録 (4 vs 4)</h2>
         <div className="accent-line mt-4 mb-2"></div>
         <p className="text-stone-400 font-bold text-sm tracking-widest uppercase">Secret Order Submission</p>
       </div>
@@ -102,6 +126,10 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
                 <div>
                   <div className="text-amber-600 text-[10px] font-black uppercase tracking-widest mb-1">TEAM NAME</div>
                   <div className="text-2xl font-black text-white">{team?.name}</div>
+                  <div className="mt-1 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
+                    登録人数 {team?.players.length}名
+                    {id === TEAM_WITH_SUBSTITUTE && "（うち補欠1名）"}
+                  </div>
                 </div>
                 <div className={`w-4 h-4 rounded-full ${done ? 'bg-stone-600' : 'bg-amber-600 animate-pulse'}`}></div>
               </div>
@@ -112,25 +140,25 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
 
       {activeTeam && (
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-[#121110] w-full max-w-md p-10 rounded-xl border border-stone-700 shadow-[0_0_50px_rgba(0,0,0,0.8)] space-y-8 animate-fadeIn">
+          <div className="bg-[#121110] w-full max-w-md p-8 rounded-xl border border-stone-700 shadow-[0_0_50px_rgba(0,0,0,0.8)] space-y-6 animate-fadeIn max-h-[90vh] overflow-y-auto">
             <div className="text-center">
               <div className="text-amber-600 font-black text-xs tracking-widest uppercase mb-1">Registration Form</div>
               <h3 className="text-3xl font-black font-serif-shogi text-white">{activeTeam.name}</h3>
               <div className="mt-4 py-1 px-4 bg-stone-900 rounded-full inline-block">
                 <span className="text-xs font-bold text-stone-400">
-                  {remaining > 0 ? `あと ${remaining} 名選択してください` : '全スロット入力済み'}
+                  {remaining > 0 ? `スロット あと ${remaining} 名選択してください` : '全スロット入力済み'}
                 </span>
               </div>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-4">
               {SLOTS.map(slot => (
                 <div key={slot} className="flex flex-col space-y-2">
                   <label className="text-xs font-black text-stone-500 uppercase tracking-tighter">Slot {slot}</label>
                   <select
                     value={tempAssignments[slot] || ""}
                     onChange={(e) => handleSelectPlayer(slot, e.target.value)}
-                    className="bg-stone-900 border-2 border-stone-800 p-4 rounded-lg font-bold text-white focus:border-amber-600 outline-none transition-colors cursor-pointer"
+                    className="bg-stone-900 border-2 border-stone-800 p-3 rounded-lg font-bold text-white focus:border-amber-600 outline-none transition-colors cursor-pointer"
                   >
                     <option value="">-- 選手を選択 --</option>
                     {activeTeam.players.map(p => (
@@ -139,11 +167,43 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
                   </select>
                 </div>
               ))}
+
+              {activeTeam.id === TEAM_WITH_SUBSTITUTE && (
+                <div className="flex flex-col space-y-2 pt-4 border-t border-stone-800">
+                  <label className="text-xs font-black text-red-400 uppercase tracking-tighter">
+                    補欠 (Substitute) ※ 対局毎に変動可
+                  </label>
+                  <select
+                    value={tempAssignments[SUBSTITUTE_KEY] || ""}
+                    onChange={(e) => handleSelectPlayer(SUBSTITUTE_KEY, e.target.value)}
+                    className="bg-stone-900 border-2 border-red-900/60 p-3 rounded-lg font-bold text-white focus:border-red-500 outline-none transition-colors cursor-pointer"
+                  >
+                    <option value="">-- 補欠選手を選択 --</option>
+                    {activeTeam.players.map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                  <p className="text-[10px] text-stone-500 leading-relaxed">
+                    4スロットで出場する4名とは別の1名を補欠として指定します（5名のうち1名が対局毎にベンチ）。
+                  </p>
+                  {subChosen && (
+                    <p className="text-[10px] font-bold text-red-300">
+                      補欠: <span className="text-white">{tempAssignments[SUBSTITUTE_KEY]}</span>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex space-x-4 pt-4">
               <button onClick={() => setActiveTeamId(null)} className="flex-1 py-4 btn-outline rounded-lg font-black">戻る</button>
-              <button onClick={submitRegistration} disabled={remaining > 0} className="flex-1 py-4 btn-primary rounded-lg shadow-xl disabled:opacity-20">確定</button>
+              <button
+                onClick={submitRegistration}
+                disabled={remaining > 0 || (activeTeam.id === TEAM_WITH_SUBSTITUTE && !subChosen)}
+                className="flex-1 py-4 btn-primary rounded-lg shadow-xl disabled:opacity-20"
+              >
+                確定
+              </button>
             </div>
           </div>
         </div>
@@ -155,7 +215,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
             <div className="space-y-3">
               <p className="text-xl font-black text-white leading-tight">選手が重複しています</p>
               <p className="text-stone-400 font-medium">
-                「<span className="text-white font-bold">{swapModal.playerName}</span>」は既に Slot {swapModal.prevSlot} で選ばれています。Slot {swapModal.slot} に入れ替えますか？
+                「<span className="text-white font-bold">{swapModal.playerName}</span>」は既に {swapModal.prevSlot === SUBSTITUTE_KEY ? '補欠' : `Slot ${swapModal.prevSlot}`} で選ばれています。{swapModal.slot === SUBSTITUTE_KEY ? '補欠' : `Slot ${swapModal.slot}`} に入れ替えますか？
               </p>
             </div>
             <div className="flex space-x-4">
