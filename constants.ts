@@ -4,7 +4,7 @@ export const TEAMS: Team[] = [
   {
     id: 1,
     name: "チーム①",
-    players: ["下田", "佐藤", "豊川", "時"]
+    players: ["下田", "佐藤", "豊川", "時", "池田大翔"] // 5名（うち1名は各回戦の補欠）
   },
   {
     id: 2,
@@ -33,8 +33,12 @@ export const ROUND_CONFIGS = [
 // 4 vs 4 / スロット4つ (前回と同じ)
 export const SLOTS: ('A' | 'B' | 'C' | 'D')[] = ['A', 'B', 'C', 'D'];
 
-// 補欠ありのチームID（チーム②のみ）
-export const TEAM_WITH_SUBSTITUTE = 2;
+// 補欠が許可されるチームID（チーム① と チーム②）
+export const TEAMS_WITH_SUBSTITUTE: number[] = [1, 2];
+
+// 補欠キー判定用ヘルパー
+export const hasSubstitute = (teamId: number): boolean =>
+  TEAMS_WITH_SUBSTITUTE.includes(teamId);
 
 // 補欠のキー名
 export const SUBSTITUTE_KEY = 'substitute';

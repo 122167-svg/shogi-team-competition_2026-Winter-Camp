@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RoundData, PlayerSlot } from './types';
-import { TEAMS, SLOTS, SUBSTITUTE_KEY, TEAM_WITH_SUBSTITUTE } from './constants';
+import { TEAMS, SLOTS, SUBSTITUTE_KEY, hasSubstitute } from './constants';
 
 interface Props {
   round: RoundData;
@@ -25,7 +25,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
     const match = matchesForRound.find(m => m.team1Id === teamId || m.team2Id === teamId);
     if (!match) return false;
     return slotsAllFilledInTeam(teamId, match.assignments[teamId]) &&
-      (teamId !== TEAM_WITH_SUBSTITUTE || !!match.assignments[teamId][SUBSTITUTE_KEY]);
+      (!hasSubstitute(teamId) || !!match.assignments[teamId][SUBSTITUTE_KEY]);
   };
 
   const startRegistration = (teamId: number) => {
@@ -73,12 +73,12 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
       alert("スロットA〜Dは選手4名を重複なく選択してください。");
       return;
     }
-    const isSubTeam = activeTeamId === TEAM_WITH_SUBSTITUTE;
+    const isSubTeam = hasSubstitute(activeTeamId);
     if (isSubTeam && !tempAssignments[SUBSTITUTE_KEY]) {
-      alert("チーム②は補欠を1名設定してください。");
+      alert(`${TEAMS.find(t => t.id === activeTeamId)?.name} は補欠を1名設定してください。`);
       return;
     }
-    // チーム②の場合、スロット4名と補欠1名が全て異なるプレイヤーで構成されているか念のため確認
+    // 補欠チームの場合、スロット4名と補欠1名が全て異なる選手か確認
     if (isSubTeam) {
       const allAssigned = new Set([
         ...filledSlotPlayers,
@@ -112,6 +112,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
         {allTeamIds.map(id => {
           const team = TEAMS.find(t => t.id === id);
           const done = isTeamDone(id);
+          const hasSub = hasSubstitute(id);
           return (
             <button
               key={id}
@@ -128,8 +129,13 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
                   <div className="text-2xl font-black text-white">{team?.name}</div>
                   <div className="mt-1 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
                     登録人数 {team?.players.length}名
-                    {id === TEAM_WITH_SUBSTITUTE && "（うち補欠1名）"}
+                    {hasSub && "（うち補欠1名）"}
                   </div>
+                  {hasSub && !done && (
+                    <div className="mt-2 text-[10px] font-bold text-red-400 uppercase tracking-widest">
+                      ※ 補欠1名設定可（対局毎に変動可）
+                    </div>
+                  )}
                 </div>
                 <div className={`w-4 h-4 rounded-full ${done ? 'bg-stone-600' : 'bg-amber-600 animate-pulse'}`}></div>
               </div>
@@ -168,7 +174,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
                 </div>
               ))}
 
-              {activeTeam.id === TEAM_WITH_SUBSTITUTE && (
+              {hasSubstitute(activeTeam.id) && (
                 <div className="flex flex-col space-y-2 pt-4 border-t border-stone-800">
                   <label className="text-xs font-black text-red-400 uppercase tracking-tighter">
                     補欠 (Substitute) ※ 対局毎に変動可
@@ -199,7 +205,7 @@ const StrategyScreen: React.FC<Props> = ({ round, onUpdateAssignment, onComplete
               <button onClick={() => setActiveTeamId(null)} className="flex-1 py-4 btn-outline rounded-lg font-black">戻る</button>
               <button
                 onClick={submitRegistration}
-                disabled={remaining > 0 || (activeTeam.id === TEAM_WITH_SUBSTITUTE && !subChosen)}
+                disabled={remaining > 0 || (hasSubstitute(activeTeam.id) && !subChosen)}
                 className="flex-1 py-4 btn-primary rounded-lg shadow-xl disabled:opacity-20"
               >
                 確定

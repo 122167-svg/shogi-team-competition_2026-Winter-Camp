@@ -1,6 +1,6 @@
 import React from 'react';
 import { RoundData } from './types';
-import { TEAMS, SUBSTITUTE_KEY, TEAM_WITH_SUBSTITUTE } from './constants';
+import { TEAMS, hasSubstitute } from './constants';
 
 interface Props {
   round: RoundData;
@@ -29,7 +29,7 @@ const RoundPreview: React.FC<Props> = ({ round, onNext }) => {
                 <div className="flex-1 space-y-3">
                   <div className="text-lg font-black text-white">{t1?.name}</div>
                   <div className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">
-                    {t1?.id === TEAM_WITH_SUBSTITUTE ? '5名（補欠1名あり）' : '4名'}
+                    {hasSubstitute(t1!.id) ? '5名（補欠1名あり）' : '4名'}
                   </div>
                   <div className="flex flex-col gap-1.5">
                     {t1?.players.map(p => (
@@ -49,7 +49,7 @@ const RoundPreview: React.FC<Props> = ({ round, onNext }) => {
                 <div className="flex-1 space-y-3">
                   <div className="text-lg font-black text-white">{t2?.name}</div>
                   <div className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">
-                    {t2?.id === TEAM_WITH_SUBSTITUTE ? '5名（補欠1名あり）' : '4名'}
+                    {hasSubstitute(t2!.id) ? '5名（補欠1名あり）' : '4名'}
                   </div>
                   <div className="flex flex-col gap-1.5">
                     {t2?.players.map(p => (

@@ -37,7 +37,7 @@ const FinalStandings: React.FC<Props> = ({ allRounds }) => {
     return b.individualWins - a.individualWins;
   });
 
-  // 個人勝数（チーム②の補欠も対戦すればカウントされる想定：今回はベンチのためカウントされない）
+  // 個人勝数（チーム①・チーム②の補欠はベンチのため、4スロットに出場した選手のみ集計対象）
   const playerStatsMap: { [name: string]: number } = {};
   TEAMS.forEach(t => t.players.forEach(p => playerStatsMap[p] = 0));
 

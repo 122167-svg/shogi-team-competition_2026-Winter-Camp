@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AppStep, RoundData, PlayerSlot } from './types';
-import { ROUND_CONFIGS, SLOTS, SUBSTITUTE_KEY, TEAM_WITH_SUBSTITUTE } from './constants';
+import { ROUND_CONFIGS, SLOTS, SUBSTITUTE_KEY, hasSubstitute } from './constants';
 import WelcomeScreen from './WelcomeScreen';
 import RulesScreen from './RulesScreen';
 import RoundPreview from './RoundPreview';
@@ -55,10 +55,10 @@ const App: React.FC = () => {
   const slotsAllFilled = (assignments: { [key: string]: string }) =>
     SLOTS.every(s => !!assignments[s]);
 
-  // チーム登録完了の判定（チーム②のみ補欠設定必須）
+  // チーム登録完了の判定（補欠許可チームは補欠設定が必須）
   const isTeamRegistrationComplete = (teamId: number, assignments: { [key: string]: string }) => {
     if (!slotsAllFilled(assignments)) return false;
-    if (teamId === TEAM_WITH_SUBSTITUTE) {
+    if (hasSubstitute(teamId)) {
       return !!assignments[SUBSTITUTE_KEY];
     }
     return true;
